@@ -1,0 +1,11 @@
+# https://www.insurup.com robots.txt
+
+User-agent: *
+Allow: /
+
+# API ve dahili rotaları engelle
+Disallow: /api/
+Disallow: /_next/
+
+# Sitemap
+Sitemap: https://www.insurup.com/sitemap.xml

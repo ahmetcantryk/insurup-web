@@ -1,0 +1,52 @@
+{
+  "site": {
+    "name": "InsurUp",
+    "url": "https://www.insurup.com",
+    "locale": "tr_TR",
+    "defaultImage": "/InsurUp/insurup-logo.svg"
+  },
+  "pages": {
+    "/": {
+      "title": "InsurUp: Sigortacılık CRM Sistemi",
+      "description": "InsurUp, sigorta acenteleri ve brokerları için satış performansını artıran ve müşteriye 360 derece odaklanan bir CRM sistemidir.",
+      "keywords": ["sigorta crm", "sigorta acentesi yazılımı", "dijital sigortacılık", "hızlı teklif programı", "poliçe yönetimi", "insurup"],
+      "image": "/InsurUp/insurup-logo.svg"
+    },
+    "/fiyatlandirma": {
+      "title": "Fiyatlandırma - InsurUp CRM Paketleri ve Ücretleri",
+      "description": "InsurUp CRM paket seçenekleri ve fiyatları. Standart, Dijital ve Dijital Profesyonel paketlerle acentenize en uygun çözümü bulun.",
+      "keywords": ["insurup fiyat", "sigorta crm fiyatları", "acente yazılımı ücreti", "sigorta programı fiyatı"],
+      "image": "/InsurUp/insurup-logo.svg"
+    },
+    "/blog": {
+      "title": "Dijital Sigortacılık Yazılımları ve Yenilikleri - InsurUp Blog",
+      "description": "Sigorta sektörünün dijital öncüsü InsurUp ile yenilikleri takip edin ve işinizi dijital dönüşümle nasıl geliştirebileceğinizi güncel içeriklerle hemen keşfedin.",
+      "keywords": ["sigorta blog", "dijital sigortacılık", "acente rehberi", "sigorta haberleri"],
+      "image": "/InsurUp/insurup-logo.svg"
+    },
+    "/crm": {
+      "title": "Sigortacılık CRM Sistemi",
+      "description": "InsurUp CRM, sigorta acenteleri ve brokerları için satış performansını artıran ve müşteriye 360 derece odaklanan bir CRM sistemidir.",
+      "keywords": ["sigorta crm", "sigorta acentesi yazılımı", "dijital sigortacılık", "hızlı teklif programı", "poliçe yönetimi"],
+      "image": "/InsurUp/insurup-logo.svg"
+    },
+    "/web-satis": {
+      "title": "Web Satış Platformu",
+      "description": "Sigorta acenteleri ve brokerleri için web servis altyapılı dijital sigorta satış yazılımı. Anında teklif, güvenli ödeme ve müşteri portalı ile hızlı poliçe satışı.",
+      "keywords": ["sigorta web satış", "online sigorta satışı", "sigorta web sitesi", "dijital sigorta platformu"],
+      "image": "/InsurUp/insurup-logo.svg"
+    },
+    "/insurchat": {
+      "title": "InsurChat - Yapay Zeka Destekli Sigorta Chatbot",
+      "description": "InsurChat ile müşterilerinize 7/24 yapay zeka destekli chatbot aracılığıyla anında destek ve teklif sunun. Sigorta satışında AI asistanınız.",
+      "keywords": ["sigorta chatbot", "yapay zeka sigorta", "AI asistan", "sigorta müşteri destek", "otomatik teklif"],
+      "image": "/InsurUp/insurup-logo.svg"
+    },
+    "/yazarlar": {
+      "title": "Yazarlarımız - InsurUp Blog",
+      "description": "InsurUp blog yazarları: dijital sigortacılık, CRM çözümleri ve sektörel yenilikler hakkında içerik üreten uzmanlar.",
+      "keywords": ["insurup yazarlar", "sigorta uzmanları"],
+      "image": "/InsurUp/insurup-logo.svg"
+    }
+  }
+}

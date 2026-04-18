@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function Footer() {
   return (
     <footer className="relative pt-20 pb-10 grain" style={{ background: "#06081A", color: "white" }}>
@@ -5,14 +7,13 @@ export default function Footer() {
       <div className="relative max-w-[1280px] mx-auto px-6">
         <div className="grid md:grid-cols-[1.4fr_1fr_1fr_1fr_1fr] gap-10">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <span className="inline-flex items-center justify-center w-7 h-7 rounded-md" style={{ background: "linear-gradient(135deg,#6E8BFF,#9B6BF0)" }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                  <path d="M4 14 L10 8 L14 12 L20 6" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M16 6 H20 V10" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </span>
-              <span className="font-semibold text-[17px]">InsurUp</span>
+            <div className="mb-4" style={{ position: "relative", width: 140, height: 32 }}>
+              <Image
+                src="/logos/logo-white.svg"
+                alt="InsurUp"
+                fill
+                style={{ objectFit: "contain", objectPosition: "left" }}
+              />
             </div>
             <p className="text-white/55 text-[14px] leading-[1.6] max-w-[300px]">Sigorta acenteleri için dijital operasyon platformu. Tekliften poliçeye, tek ekranda.</p>
             <div className="mt-6 flex gap-2">

@@ -95,16 +95,6 @@ export default function ClientScripts() {
       detailsHandlers.push([d, h]);
     });
 
-    // Nav scroll shadow — keep opaque on all backgrounds
-    const nav = document.getElementById("nav");
-    const onScroll = () => {
-      if (!nav) return;
-      nav.style.background =
-        window.scrollY > 20 ? "rgba(10,15,44,.98)" : "rgba(10,15,44,.92)";
-    };
-    window.addEventListener("scroll", onScroll);
-    onScroll();
-
     // Screenshot gallery tabs
     const galleryHandlers: Array<[HTMLElement, () => void]> = [];
     document.querySelectorAll<HTMLElement>(".tab-btn").forEach((btn) => {
@@ -125,7 +115,6 @@ export default function ClientScripts() {
       faqHandlers.forEach(([el, h]) => el.removeEventListener("click", h));
       detailsHandlers.forEach(([el, h]) => el.removeEventListener("toggle", h));
       galleryHandlers.forEach(([el, h]) => el.removeEventListener("click", h));
-      window.removeEventListener("scroll", onScroll);
     };
   }, [pathname]);
 

@@ -226,8 +226,45 @@ summary::-webkit-details-marker { display: none; }
 .conv-chip--accent { border-color: rgba(155,107,240,.35); color: #E0D4FF; background: rgba(23,18,48,.95); }
 @keyframes conv-ltr { from { left: -5%; } to { left: 52%; } }
 @keyframes conv-rtl { from { left: 105%; } to { left: 48%; } }
-.conv-ltr { animation: conv-ltr 12s linear infinite; }
-.conv-rtl { animation: conv-rtl 12s linear infinite; }
+/* chip animations — duration set inline from JS (for scroll-driven speedup) */
+.conv-chip { animation-timing-function: linear; animation-iteration-count: infinite; }
+.conv-ltr { animation-name: conv-ltr; }
+.conv-rtl { animation-name: conv-rtl; }
+
+/* Bento card sheen sweep */
+@keyframes sheen { 0% { transform: translateX(-100%); } 60%, 100% { transform: translateX(200%); } }
+.sheen-sweep { position: absolute; inset: 0; pointer-events: none; overflow: hidden; border-radius: inherit; }
+.sheen-sweep::before { content: ""; position: absolute; top: 0; bottom: 0; width: 40%; background: linear-gradient(100deg, transparent 20%, rgba(255,255,255,.08) 50%, transparent 80%); animation: sheen 6s ease-in-out infinite; }
+
+/* live pulsing dot (larger radar pulse) */
+@keyframes pulse-ring { 0% { transform: scale(.6); opacity: .75; } 100% { transform: scale(2.2); opacity: 0; } }
+.pulse-dot { position: relative; }
+.pulse-dot::after { content: ""; position: absolute; inset: -2px; border-radius: 50%; background: currentColor; opacity: .35; animation: pulse-ring 1.8s ease-out infinite; }
+
+/* subtle number counter bounce */
+@keyframes num-pop { 0%, 100% { opacity: 1; } 50% { opacity: .65; } }
+.num-pop { animation: num-pop 3s ease-in-out infinite; }
+
+/* sparkline draw */
+@keyframes spark-dash { to { stroke-dashoffset: 0; } }
+.spark-anim { stroke-dasharray: 600; stroke-dashoffset: 600; animation: spark-dash 3.5s ease-out forwards infinite; }
+
+/* template fade cycle — 3 stacked */
+@keyframes tpl-cycle { 0%, 26% { opacity: 1; } 33%, 100% { opacity: 0; } }
+.tpl-1 { animation: tpl-cycle 9s infinite; animation-delay: 0s; }
+.tpl-2 { animation: tpl-cycle 9s infinite; animation-delay: 3s; }
+.tpl-3 { animation: tpl-cycle 9s infinite; animation-delay: 6s; }
+
+/* typewriter URL */
+@keyframes url-cycle {
+  0%, 26% { content: "yildizsigorta.com.tr"; }
+  33%, 59% { content: "egeaxasigorta.com.tr"; }
+  66%, 100% { content: "ozsigorta.com.tr"; }
+}
+
+/* caret blink */
+@keyframes caret { 50% { opacity: 0; } }
+.caret { animation: caret 1s steps(2) infinite; }
 
 /* InsurChat — AI vibe */
 @keyframes ai-pulse { 0%,100% { transform: scale(1); opacity: .8; } 50% { transform: scale(1.08); opacity: 1; } }

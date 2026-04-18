@@ -29,7 +29,7 @@ export const metadata: Metadata = {
       { url: "/favicon.ico" },
     ],
     shortcut: "/InsurUp Icon.svg",
-    apple: "/apple-touch-icon.png",
+    apple: "/InsurUp Icon.svg",
   },
   manifest: "/manifest.webmanifest",
 };

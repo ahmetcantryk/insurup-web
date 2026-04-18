@@ -3,7 +3,6 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import Cover from "@/components/blog/Cover";
 import PostCard from "@/components/blog/PostCard";
 import ReadingProgress from "@/components/blog/ReadingProgress";
 import ShareButtons from "@/components/blog/ShareButtons";
@@ -48,15 +47,13 @@ export default async function BlogDetailPage({ params }: Props) {
       <Navbar />
       <ReadingProgress />
 
-      <article className="relative pt-24" style={{ background: "#FAFAF9" }}>
-        {/* Cover */}
-        <div className="relative">
-          <Cover post={post} height={360} />
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg,rgba(0,0,0,.1),rgba(250,250,249,.0))" }}></div>
-        </div>
-
-        {/* Meta + title */}
-        <div className="relative max-w-[720px] mx-auto px-6 pt-12 pb-8">
+      <article className="relative" style={{ background: "#FAFAF9" }}>
+        {/* Meta + title (no cover banner) */}
+        <div className="relative max-w-[720px] mx-auto px-6 pt-28 pb-8">
+          <Link href="/blog" className="inline-flex items-center gap-1.5 font-mono text-[12px] text-ink-900/55 mb-6 hover:text-ink-900">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M6 2L2 5l4 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            tüm yazılar
+          </Link>
           <div className="flex items-center gap-2 flex-wrap">
             <Link
               href={`/blog?category=${post.category}`}

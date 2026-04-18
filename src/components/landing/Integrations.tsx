@@ -88,8 +88,8 @@ export default function Integrations() {
           },
         });
 
-        // Gentle but noticeable growth across the whole scroll (~25px on a 290px icon)
-        tl.to(logoRef.current, { scale: 1.085, ease: "none" }, 0);
+        // Growth across the whole scroll: 1.0 → 1.2
+        tl.to(logoRef.current, { scale: 1.2, ease: "none" }, 0);
 
         // Rails + chips fade in right after scroll starts
         tl.to(railsRef.current, { opacity: 1, duration: 0.08, ease: "power1.out" }, 0.04);

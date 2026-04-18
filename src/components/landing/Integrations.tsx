@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Run layout effects in browser, fall back to useEffect during SSR
+const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -46,9 +49,6 @@ const LANES: Lane[] = [
 const ICON_PATH =
   "M27.9437 1.87079L25.8746 9.7929C25.6045 10.827 26.2022 11.6637 27.2109 11.6637H34.9385C35.9472 11.6637 36.5449 12.5004 36.2748 13.5345L33.7143 23.3304H24.159C23.1503 23.3304 22.5525 22.4937 22.8227 21.4596L24.8918 13.5374C25.1619 12.5034 24.5642 11.6667 23.5555 11.6667H15.8279C14.8192 11.6667 14.2214 10.83 14.4916 9.7959L17.0521 0H26.6074C27.6161 0 28.2139 0.8367 27.9437 1.87079ZM19.9428 19.9835L21.943 22.7852H21.9458C22.1987 23.1358 22.2648 23.6102 22.1355 24.1081L19.2876 34.9999H9.73228C8.72359 34.9999 8.12584 34.1632 8.39598 33.1291L10.6174 24.6266C10.7109 24.2698 10.6547 23.9463 10.4877 23.712L18.5232 19.7537C19.0807 19.4885 19.6554 19.5828 19.9428 19.9835ZM10.487 23.7111C10.4873 23.7114 10.4875 23.7117 10.4877 23.712L10.4852 23.7133L10.487 23.7111ZM10.487 23.7111C10.3202 23.4777 10.0434 23.3332 9.69493 23.3332H1.40121C0.39251 23.3332 -0.205236 22.4965 0.0648991 21.4624L2.62256 11.6695H13.2469C13.7297 11.6695 14.1435 11.8669 14.3936 12.2175L16.4742 15.1312C16.7644 15.5407 16.6868 16.1682 16.2845 16.672L10.487 23.7111Z";
 
-const evenDelay = (i: number, total: number, duration: number) =>
-  `-${((i * duration) / total).toFixed(2)}s`;
-
 export default function Integrations() {
   const sectionRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
@@ -57,7 +57,7 @@ export default function Integrations() {
   const railsRef = useRef<HTMLDivElement>(null);
   const chipsRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useIsoLayoutEffect(() => {
     if (!sectionRef.current) return;
 
     const emitNav = (show: boolean) =>
@@ -95,23 +95,25 @@ export default function Integrations() {
             onUpdate: (self) => {
               const el = chipsRef.current;
               if (!el) return;
-              // Progress 0 → slow (mult 1), Progress 1 → fast (mult 0.18)
-              const mult = gsap.utils.mapRange(0, 1, 1, 0.18)(self.progress);
-              // Extra velocity boost on fast scrolling (snappier feel)
-              const v = Math.min(1, Math.abs(self.getVelocity()) / 2000);
-              const final = Math.max(0.12, mult - v * 0.25);
-              // Directly set animationDuration on every chip (bypasses CSS calc quirks)
+              // Gentle range: 1.0 (slow) → 0.75 (only ~1.33x speedup) to prevent overlap
+              const mult = gsap.utils.mapRange(0, 1, 1, 0.75)(self.progress);
+              // Tiny velocity boost
+              const v = Math.min(1, Math.abs(self.getVelocity()) / 3000);
+              const final = Math.max(0.7, mult - v * 0.05);
+              // Scale duration AND delay together to keep chip spacing constant
               const chips = el.querySelectorAll<HTMLElement>(".conv-chip");
               chips.forEach((chip) => {
                 const base = parseFloat(chip.dataset.base || "20");
+                const baseDelay = parseFloat(chip.dataset.baseDelay || "0");
                 chip.style.animationDuration = `${(base * final).toFixed(2)}s`;
+                chip.style.animationDelay = `${(baseDelay * final).toFixed(2)}s`;
               });
             },
           },
         });
 
-        // Millimeter-level logo growth across the whole (long) scroll
-        tl.to(logoRef.current, { scale: 1.08, ease: "none" }, 0);
+        // Barely-perceptible growth across the whole scroll (~10px on a 290px icon)
+        tl.to(logoRef.current, { scale: 1.035, ease: "none" }, 0);
 
         // Rails + chips fade in right after scroll starts
         tl.to(railsRef.current, { opacity: 1, duration: 0.08, ease: "power1.out" }, 0.04);
@@ -127,7 +129,18 @@ export default function Integrations() {
       return () => ctx.revert();
     });
 
+    // Force a refresh after fonts/images settle — fixes wrong positions on first load
+    const refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 200);
+    const onLoad = () => ScrollTrigger.refresh();
+    window.addEventListener("load", onLoad);
+    // Also refresh once fonts are ready (Geist loads async on prod)
+    if (typeof document !== "undefined" && document.fonts?.ready) {
+      document.fonts.ready.then(() => ScrollTrigger.refresh()).catch(() => {});
+    }
+
     return () => {
+      clearTimeout(refreshTimer);
+      window.removeEventListener("load", onLoad);
       mm.revert();
       emitNav(true);
     };
@@ -201,34 +214,42 @@ export default function Integrations() {
         {LANES.map((lane, li) => (
           <div key={li}>
             <div className="conv-lane" style={{ top: lane.top }}>
-              {lane.ltr.map((name, idx) => (
-                <span
-                  key={name}
-                  data-base={lane.idle}
-                  className={`conv-chip conv-ltr${lane.accent ? " conv-chip--accent" : ""}`}
-                  style={{
-                    animationDelay: evenDelay(idx, lane.ltr.length, lane.idle),
-                    animationDuration: `${lane.idle}s`,
-                  }}
-                >
-                  {name}
-                </span>
-              ))}
+              {lane.ltr.map((name, idx) => {
+                const delaySec = -((idx * lane.idle) / lane.ltr.length);
+                return (
+                  <span
+                    key={name}
+                    data-base={lane.idle}
+                    data-base-delay={delaySec}
+                    className={`conv-chip conv-ltr${lane.accent ? " conv-chip--accent" : ""}`}
+                    style={{
+                      animationDelay: `${delaySec.toFixed(2)}s`,
+                      animationDuration: `${lane.idle}s`,
+                    }}
+                  >
+                    {name}
+                  </span>
+                );
+              })}
             </div>
             <div className="conv-lane" style={{ top: lane.top }}>
-              {lane.rtl.map((name, idx) => (
-                <span
-                  key={name}
-                  data-base={lane.idle}
-                  className={`conv-chip conv-rtl${lane.accent ? " conv-chip--accent" : ""}`}
-                  style={{
-                    animationDelay: evenDelay(idx, lane.rtl.length, lane.idle),
-                    animationDuration: `${lane.idle}s`,
-                  }}
-                >
-                  {name}
-                </span>
-              ))}
+              {lane.rtl.map((name, idx) => {
+                const delaySec = -((idx * lane.idle) / lane.rtl.length);
+                return (
+                  <span
+                    key={name}
+                    data-base={lane.idle}
+                    data-base-delay={delaySec}
+                    className={`conv-chip conv-rtl${lane.accent ? " conv-chip--accent" : ""}`}
+                    style={{
+                      animationDelay: `${delaySec.toFixed(2)}s`,
+                      animationDuration: `${lane.idle}s`,
+                    }}
+                  >
+                    {name}
+                  </span>
+                );
+              })}
             </div>
           </div>
         ))}

@@ -226,10 +226,9 @@ summary::-webkit-details-marker { display: none; }
 .conv-chip--accent { border-color: rgba(155,107,240,.35); color: #E0D4FF; background: rgba(23,18,48,.95); }
 @keyframes conv-ltr { from { left: -5%; } to { left: 52%; } }
 @keyframes conv-rtl { from { left: 105%; } to { left: 48%; } }
-/* chip animations — duration set inline from JS (for scroll-driven speedup) */
-.conv-chip { animation-timing-function: linear; animation-iteration-count: infinite; }
-.conv-ltr { animation-name: conv-ltr; }
-.conv-rtl { animation-name: conv-rtl; }
+/* chip animations — shorthand provides default, inline animationDuration overrides for scroll-driven speedup */
+.conv-ltr { animation: conv-ltr 20s linear infinite; }
+.conv-rtl { animation: conv-rtl 20s linear infinite; }
 
 /* Bento card sheen sweep */
 @keyframes sheen { 0% { transform: translateX(-100%); } 60%, 100% { transform: translateX(200%); } }

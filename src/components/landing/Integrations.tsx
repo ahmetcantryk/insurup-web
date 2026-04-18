@@ -14,9 +14,7 @@ if (typeof window !== "undefined") {
 type Lane = {
   top: number;
   accent?: boolean;
-  // durations in seconds — idle (slow) and fast (active scroll) modes
-  idle: number;
-  fast: number;
+  idle: number; // animation-duration in seconds
   ltr: string[];
   rtl: string[];
 };
@@ -24,23 +22,20 @@ type Lane = {
 const LANES: Lane[] = [
   {
     top: 60,
-    idle: 32,
-    fast: 6,
+    idle: 22,
     ltr: ["Anadolu Sigorta", "HDI Sigorta", "Mapfre Sigorta", "Ray Sigorta", "Türkiye Sigorta"],
     rtl: ["Neova Sigorta", "Unico Sigorta", "Doğa Sigorta", "Quick Sigorta", "Generali Sigorta"],
   },
   {
     top: 150,
     accent: true,
-    idle: 22,
-    fast: 4,
+    idle: 16,
     ltr: ["AXA Sigorta", "Sompo Sigorta", "Orient Sigorta", "Ziraat Sigorta", "Halk Sigorta"],
     rtl: ["Zurich Sigorta", "Groupama Sigorta", "Corpus Sigorta", "Ziraat Hayat", "Vakıf Emeklilik"],
   },
   {
     top: 240,
-    idle: 38,
-    fast: 7.5,
+    idle: 26,
     ltr: ["Allianz Sigorta", "Ak Sigorta", "Güneş Sigorta", "Aksigorta", "Fiba Sigorta"],
     rtl: ["Türk Nippon Sigorta", "Allianz Yaşam", "Magdeburger Sigorta", "Ankara Sigorta", "Ethica Sigorta"],
   },
@@ -76,8 +71,6 @@ export default function Integrations() {
         gsap.set(ctaRef.current, { opacity: 0, y: 20 });
         gsap.set(railsRef.current, { opacity: 0 });
         gsap.set(chipsRef.current, { opacity: 0 });
-        // Chip speed multiplier: 1 = idle/slow, 0.2 = fast (set on chip container)
-        if (chipsRef.current) chipsRef.current.style.setProperty("--speed-mult", "1");
 
         const tl = gsap.timeline({
           scrollTrigger: {
@@ -92,23 +85,6 @@ export default function Integrations() {
             onLeave: () => emitNav(true),
             onEnterBack: () => emitNav(false),
             onLeaveBack: () => emitNav(true),
-            onUpdate: (self) => {
-              const el = chipsRef.current;
-              if (!el) return;
-              // Gentle range: 1.0 (slow) → 0.75 (only ~1.33x speedup) to prevent overlap
-              const mult = gsap.utils.mapRange(0, 1, 1, 0.75)(self.progress);
-              // Tiny velocity boost
-              const v = Math.min(1, Math.abs(self.getVelocity()) / 3000);
-              const final = Math.max(0.7, mult - v * 0.05);
-              // Scale duration AND delay together to keep chip spacing constant
-              const chips = el.querySelectorAll<HTMLElement>(".conv-chip");
-              chips.forEach((chip) => {
-                const base = parseFloat(chip.dataset.base || "20");
-                const baseDelay = parseFloat(chip.dataset.baseDelay || "0");
-                chip.style.animationDuration = `${(base * final).toFixed(2)}s`;
-                chip.style.animationDelay = `${(baseDelay * final).toFixed(2)}s`;
-              });
-            },
           },
         });
 
@@ -214,42 +190,32 @@ export default function Integrations() {
         {LANES.map((lane, li) => (
           <div key={li}>
             <div className="conv-lane" style={{ top: lane.top }}>
-              {lane.ltr.map((name, idx) => {
-                const delaySec = -((idx * lane.idle) / lane.ltr.length);
-                return (
-                  <span
-                    key={name}
-                    data-base={lane.idle}
-                    data-base-delay={delaySec}
-                    className={`conv-chip conv-ltr${lane.accent ? " conv-chip--accent" : ""}`}
-                    style={{
-                      animationDelay: `${delaySec.toFixed(2)}s`,
-                      animationDuration: `${lane.idle}s`,
-                    }}
-                  >
-                    {name}
-                  </span>
-                );
-              })}
+              {lane.ltr.map((name, idx) => (
+                <span
+                  key={name}
+                  className={`conv-chip conv-ltr${lane.accent ? " conv-chip--accent" : ""}`}
+                  style={{
+                    animationDelay: `${(-((idx * lane.idle) / lane.ltr.length)).toFixed(2)}s`,
+                    animationDuration: `${lane.idle}s`,
+                  }}
+                >
+                  {name}
+                </span>
+              ))}
             </div>
             <div className="conv-lane" style={{ top: lane.top }}>
-              {lane.rtl.map((name, idx) => {
-                const delaySec = -((idx * lane.idle) / lane.rtl.length);
-                return (
-                  <span
-                    key={name}
-                    data-base={lane.idle}
-                    data-base-delay={delaySec}
-                    className={`conv-chip conv-rtl${lane.accent ? " conv-chip--accent" : ""}`}
-                    style={{
-                      animationDelay: `${delaySec.toFixed(2)}s`,
-                      animationDuration: `${lane.idle}s`,
-                    }}
-                  >
-                    {name}
-                  </span>
-                );
-              })}
+              {lane.rtl.map((name, idx) => (
+                <span
+                  key={name}
+                  className={`conv-chip conv-rtl${lane.accent ? " conv-chip--accent" : ""}`}
+                  style={{
+                    animationDelay: `${(-((idx * lane.idle) / lane.rtl.length)).toFixed(2)}s`,
+                    animationDuration: `${lane.idle}s`,
+                  }}
+                >
+                  {name}
+                </span>
+              ))}
             </div>
           </div>
         ))}
